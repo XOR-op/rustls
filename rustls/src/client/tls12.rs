@@ -1011,12 +1011,12 @@ impl State<ClientConnectionData> for ExpectFinished {
         // get one chance.  But it can't hurt.
         let _fin_verified = match ConstantTimeEq::ct_eq(&expect_verify_data[..], &finished.0).into()
         {
-            true => verify::FinishedMessageVerified::assertion(),
-            false => {
+            false if !cx.common.skip_handshake_verification => {
                 return Err(cx
                     .common
                     .send_fatal_alert(AlertDescription::DecryptError, Error::DecryptError));
             }
+            _ => verify::FinishedMessageVerified::assertion(),
         };
 
         // Hash this message too.

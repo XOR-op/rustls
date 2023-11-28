@@ -166,6 +166,7 @@ impl ConfigBuilder<ClientConfig, WantsClientCert> {
             verifier: self.state.verifier,
             key_log: Arc::new(NoKeyLog {}),
             enable_secret_extraction: false,
+            enable_skip_handshake: false,
             enable_early_data: false,
         }
     }

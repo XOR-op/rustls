@@ -193,6 +193,9 @@ pub struct ClientConfig {
     /// e.g. for kTLS setup.
     pub enable_secret_extraction: bool,
 
+    /// Allows skipping handshake message verification for Client Finished phase in handshake.
+    pub(super) enable_skip_handshake: bool,
+
     /// Whether to send data on the first flight ("early data") in
     /// TLS 1.3 handshakes.
     ///
@@ -231,6 +234,7 @@ impl Clone for ClientConfig {
             verifier: Arc::clone(&self.verifier),
             key_log: Arc::clone(&self.key_log),
             enable_secret_extraction: self.enable_secret_extraction,
+            enable_skip_handshake: self.enable_skip_handshake,
             enable_early_data: self.enable_early_data,
         }
     }
@@ -447,6 +451,11 @@ pub(super) mod danger {
         /// Overrides the default `ServerCertVerifier` with something else.
         pub fn set_certificate_verifier(&mut self, verifier: Arc<dyn ServerCertVerifier>) {
             self.cfg.verifier = verifier;
+        }
+
+        /// Set if integrity result sent from server is discarded.
+        pub fn set_skip_handshake_verification(&mut self, flag: bool) {
+            self.cfg.enable_skip_handshake = flag;
         }
     }
 }

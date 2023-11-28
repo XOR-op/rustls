@@ -49,6 +49,7 @@ pub struct CommonState {
     pub(crate) protocol: Protocol,
     pub(crate) quic: quic::Quic,
     pub(crate) enable_secret_extraction: bool,
+    pub(crate) skip_handshake_verification: bool,
 }
 
 impl CommonState {
@@ -76,6 +77,7 @@ impl CommonState {
             protocol: Protocol::Tcp,
             quic: quic::Quic::default(),
             enable_secret_extraction: false,
+            skip_handshake_verification: false,
         }
     }
 
