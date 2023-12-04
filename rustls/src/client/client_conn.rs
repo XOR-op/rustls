@@ -701,6 +701,7 @@ impl ConnectionCore<ClientConnectionData> {
         common_state.set_max_fragment_size(config.max_fragment_size)?;
         common_state.protocol = proto;
         common_state.enable_secret_extraction = config.enable_secret_extraction;
+        common_state.skip_handshake_verification = config.enable_skip_handshake;
         let mut data = ClientConnectionData::new();
 
         let mut cx = hs::ClientContext {
