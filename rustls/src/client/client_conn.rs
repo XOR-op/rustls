@@ -30,6 +30,7 @@ use core::mem;
 use core::ops::{Deref, DerefMut};
 use std::io;
 
+use crate::client::client_hello::ClientHelloOverride;
 #[cfg(doc)]
 use crate::{crypto, DistinguishedName};
 
@@ -200,6 +201,8 @@ pub struct ClientConfig {
     ///
     /// The default is false.
     pub enable_early_data: bool,
+
+    pub(super) client_hello_override: Option<Arc<dyn ClientHelloOverride>>,
 }
 
 /// What mechanisms to support for resuming a TLS 1.2 session.
@@ -232,6 +235,7 @@ impl Clone for ClientConfig {
             key_log: Arc::clone(&self.key_log),
             enable_secret_extraction: self.enable_secret_extraction,
             enable_early_data: self.enable_early_data,
+            client_hello_override: self.client_hello_override.clone(),
         }
     }
 }
@@ -386,6 +390,7 @@ impl Default for Resumption {
 
 /// Container for unsafe APIs
 pub(super) mod danger {
+    use crate::client::client_hello::ClientHelloOverride;
     use alloc::sync::Arc;
 
     use super::verify::ServerCertVerifier;
@@ -402,6 +407,11 @@ pub(super) mod danger {
         /// Overrides the default `ServerCertVerifier` with something else.
         pub fn set_certificate_verifier(&mut self, verifier: Arc<dyn ServerCertVerifier>) {
             self.cfg.verifier = verifier;
+        }
+
+        /// Set ClientHello override
+        pub fn set_hello_override(&mut self, overrider: Arc<dyn ClientHelloOverride>) {
+            self.cfg.client_hello_override = Some(overrider)
         }
     }
 }

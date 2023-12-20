@@ -395,19 +395,13 @@ pub mod internal {
             pub use crate::msgs::deframer::{DeframerVecBuffer, MessageDeframer};
         }
         pub mod enums {
-            pub use crate::msgs::enums::{
-                AlertLevel, Compression, EchVersion, HpkeAead, HpkeKdf, HpkeKem, NamedGroup,
-            };
+            pub use crate::msgs::enums::*;
         }
         pub mod fragmenter {
             pub use crate::msgs::fragmenter::MessageFragmenter;
         }
         pub mod handshake {
-            pub use crate::msgs::handshake::{
-                CertificateChain, ClientExtension, ClientHelloPayload, DistinguishedName,
-                EchConfig, EchConfigContents, HandshakeMessagePayload, HandshakePayload,
-                HpkeKeyConfig, HpkeSymmetricCipherSuite, KeyShareEntry, Random, SessionId,
-            };
+            pub use crate::msgs::handshake::*;
         }
         pub mod message {
             pub use crate::msgs::message::{Message, MessagePayload, OpaqueMessage, PlainMessage};
@@ -458,6 +452,8 @@ pub use crate::webpki::RootCertStore;
 pub mod client {
     pub(super) mod builder;
     mod client_conn;
+    /// Helper functionality on modifying client hello.
+    pub mod client_hello;
     mod common;
     pub(super) mod handy;
     mod hs;
