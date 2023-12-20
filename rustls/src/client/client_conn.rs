@@ -30,6 +30,8 @@ use crate::WantsVerifier;
 use crate::{crypto, DistinguishedName};
 use crate::{sign, verify, versions, KeyLog, WantsVersions};
 
+use crate::client::client_hello::ClientHelloOverride;
+
 /// A trait for the ability to store client session data, so that sessions
 /// can be resumed in future connections.
 ///
@@ -187,6 +189,8 @@ pub struct ClientConfig {
     ///
     /// The default is false.
     pub enable_early_data: bool,
+
+    pub(super) client_hello_override: Option<Arc<dyn ClientHelloOverride>>,
 
     /// If set to `true`, requires the server to support the extended
     /// master secret extraction method defined in [RFC 7627].
@@ -390,6 +394,7 @@ impl Clone for ClientConfig {
             #[cfg(feature = "tls12")]
             require_ems: self.require_ems,
             time_provider: Arc::clone(&self.time_provider),
+            client_hello_override: self.client_hello_override.clone(),
         }
     }
 }
@@ -478,6 +483,7 @@ pub enum Tls12Resumption {
 
 /// Container for unsafe APIs
 pub(super) mod danger {
+    use crate::client::client_hello::ClientHelloOverride;
     use alloc::sync::Arc;
 
     use super::verify::ServerCertVerifier;
@@ -494,6 +500,11 @@ pub(super) mod danger {
         /// Overrides the default `ServerCertVerifier` with something else.
         pub fn set_certificate_verifier(&mut self, verifier: Arc<dyn ServerCertVerifier>) {
             self.cfg.verifier = verifier;
+        }
+
+        /// Set ClientHello override
+        pub fn set_hello_override(&mut self, overrider: Arc<dyn ClientHelloOverride>) {
+            self.cfg.client_hello_override = Some(overrider)
         }
     }
 }

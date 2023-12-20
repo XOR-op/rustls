@@ -301,6 +301,11 @@ fn emit_client_hello_for_retry(
         }
     });
 
+    let exts = match config.client_hello_override.as_ref() {
+        None => exts,
+        Some(p) => p.override_extensions(exts),
+    };
+
     // Note what extensions we sent.
     input.hello.sent_extensions = exts
         .iter()
@@ -318,6 +323,10 @@ fn emit_client_hello_for_retry(
         .collect();
     // We don't do renegotiation at all, in fact.
     cipher_suites.push(CipherSuite::TLS_EMPTY_RENEGOTIATION_INFO_SCSV);
+
+    if let Some(p) = config.client_hello_override.as_ref() {
+        cipher_suites = p.override_cipher_suites(cipher_suites);
+    }
 
     let mut chp = HandshakeMessagePayload {
         typ: HandshakeType::ClientHello,

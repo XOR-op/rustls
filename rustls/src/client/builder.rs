@@ -164,6 +164,7 @@ impl ConfigBuilder<ClientConfig, WantsClientCert> {
             #[cfg(feature = "tls12")]
             require_ems: cfg!(feature = "fips"),
             time_provider: self.state.time_provider,
+            client_hello_override: None,
         }
     }
 }
